@@ -16,16 +16,18 @@ RUN uv sync --frozen --no-cache
 # Stage 2: Run-time image
 FROM python:3.13-slim-bookworm AS runtime
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    # for code update
     git \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /code
 COPY --from=builder /code/.venv ./.venv
 ENV PATH="/code/.venv/bin:$PATH"
+
+# YEH LINE ADD KAREIN - Copy source code
+COPY src/ /code/app/src/
+
 RUN useradd -m appuser
 USER appuser
 
 WORKDIR /code/app
-# Last line change karein
-CMD ["python3", "src/main.py"]
+CMD ["python3", "-m", "src"]
