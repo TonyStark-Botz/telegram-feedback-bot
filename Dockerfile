@@ -25,8 +25,11 @@ COPY --from=builder /code/.venv ./.venv
 # Copy the entire application code
 COPY . .
 
+# Create data directory with proper permissions
+RUN mkdir -p /code/data && chmod 755 /code/data
+
 ENV PATH="/code/.venv/bin:$PATH"
-RUN useradd -m appuser
+RUN useradd -m appuser && chown -R appuser:appuser /code
 USER appuser
 
 CMD ["python3", "-m", "src"]
